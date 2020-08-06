@@ -1,40 +1,60 @@
 import React from 'react';
-import  './styles.css';
 
-import whatsIcon from '../../assets/images/icons/whatsapp.svg'
-const TeacherItem: React.FC = () => {
-  return (
+import api from '../../services/api';
 
-    <article className="teacher-item">
-    <header>
-      <img src="https://avatars3.githubusercontent.com/u/46463944?s=460&u=c56af4a4d9ba5cce94c1ee3c6f7b7fb1a478aa53&v=4" alt="Mateus Guedz"/>
-      <div>
-        <strong>Mateus Guedz</strong>
-        <span>Quimica</span>
-      </div>
-    </header>
+import whatsappIcon from '../../assets/images/icons/whatsapp.svg';
 
-    <p>
-    Entusiasta das melhores tecnologias de química avançada.
-    </p>
-    <br />
-    <p>
-    Apaixonado por explodir coisas em laboratório e por mudar a vida das pessoas através de experiências. Mais de 200.000 pessoas já passaram por uma das minhas explosões.
-    </p>
+import './styles.css';
 
-    <footer>
-      <p>
-      Preço/hora 
-      <strong>R$ 60,00</strong>
-      </p>
-
-      <button type="submit">
-          <img src={whatsIcon} alt="whatsapp"/>
-            Entrar em Contato
-      </button>
-    </footer>
-  </article>
-  );
+export interface Teacher {
+    id: number;
+    avatar: string;
+    bio: string;
+    cost: number;
+    name: string;
+    subject: string;
+    whatsapp: string;
 }
+
+interface TeacherItemProps {
+    teacher: Teacher;
+}
+
+const TeacherItem: React.FC<TeacherItemProps> = ({ teacher }) => {
+    function createNewConnection() {
+        api.post('connections', {
+            user_id: teacher.id
+        });
+    }
+
+    return (
+        <article className="teacher-item">
+            <header>
+                <img src={teacher.avatar} alt={teacher.name} />
+                <div>
+                    <strong>{teacher.name}</strong>
+                    <span>{teacher.subject}</span>
+                </div>
+            </header>
+
+            <p>{teacher.bio}</p>
+
+            <footer>
+                <p>
+                    Preço/hora
+                    <strong>R$ {teacher.cost}</strong>
+                </p>
+                <a
+                    onClick={createNewConnection}
+                    target="_blank"
+                    href={`https://wa.me/+55${teacher.whatsapp}`}
+                >
+                    <img src={whatsappIcon} alt="Whatsapp" />
+                    Entrar em contato
+                </a>
+            </footer>
+        </article>
+    );
+};
 
 export default TeacherItem;
